@@ -1,7 +1,39 @@
 // data/store.js
-// In-memory store — resets when the server restarts.
-// Replace this with a JSON file or SQLite for persistence.
+// Persists tasks to a JSON file
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const tasks = [];
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const FILE_PATH = join(__dirname, 'tasks.json');
 
-export default tasks;
+function loadTasks() {
+  if (!existsSync(FILE_PATH)) return [];
+
+  try {
+    const data = JSON.parse(
+      readFileSync(FILE_PATH, 'utf-8')
+    );
+
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Failed to load tasks:', error.message);
+    return [];
+  }
+}
+
+function saveTasks(tasks) {
+  try {
+    writeFileSync(
+      FILE_PATH,
+      JSON.stringify(tasks, null, 2),
+      'utf-8'
+    );
+  } catch (error) {
+    console.error('Failed to save tasks:', error.message);
+  }
+}
+
+const tasks = loadTasks();
+
+export { tasks, saveTasks };

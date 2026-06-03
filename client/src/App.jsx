@@ -7,23 +7,26 @@ import TaskList from './components/TaskList.jsx';
 import TaskForm from './components/TaskForm.jsx';
 import EditModal from './components/EditModal.jsx';
 import DeleteDialog from './components/DeleteDialog.jsx';
+import SearchBar from './components/SearchBar.jsx';
 
 export default function App() {
   const {
     tasks,
     filter,
     setFilter,
+    search,
+    setSearch,
     loading,
     error,
     addTask,
     toggleTask,
     editTask,
     removeTask,
+    reorderTaskList,
     activeCount,
     completedCount,
   } = useTasks();
 
-  // Which task is currently being edited or deleted
   const [editingTask, setEditingTask] = useState(null);
   const [deletingTask, setDeletingTask] = useState(null);
 
@@ -50,6 +53,9 @@ export default function App() {
         {/* Add task form */}
         <TaskForm onAdd={addTask} />
 
+        {/* Search */}
+        <SearchBar search={search} onSearchChange={setSearch} />
+
         {/* Filter tabs */}
         <div className="mb-4">
           <FilterTabs filter={filter} onFilterChange={setFilter} />
@@ -63,17 +69,16 @@ export default function App() {
           onToggle={toggleTask}
           onEdit={(task) => setEditingTask(task)}
           onDelete={(task) => setDeletingTask(task)}
+          onReorder={reorderTaskList}
         />
       </div>
 
-      {/* Edit modal */}
       <EditModal
         task={editingTask}
         onSave={editTask}
         onClose={() => setEditingTask(null)}
       />
 
-      {/* Delete confirmation */}
       <DeleteDialog
         task={deletingTask}
         onConfirm={handleConfirmDelete}
