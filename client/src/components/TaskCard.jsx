@@ -14,7 +14,7 @@ function formatDate(dateStr) {
   });
 }
 
-export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
+export default function TaskCard({ task, onToggle, onEdit, onDelete, dragHandleProps = {} }) {
   const overdue = isOverdue(task.dueDate, task.completed);
 
   return (
@@ -28,6 +28,17 @@ export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
       }`}
     >
       <div className="flex items-start gap-3">
+
+        {/* Drag handle */}
+        <div
+          {...dragHandleProps}
+          className="mt-1 shrink-0 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 touch-none select-none"
+          aria-label="Drag to reorder"
+        >
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M7 2a1 1 0 000 2 1 1 0 000-2zm6 0a1 1 0 000 2 1 1 0 000-2zM7 8a1 1 0 000 2 1 1 0 000-2zm6 0a1 1 0 000 2 1 1 0 000-2zm-6 6a1 1 0 000 2 1 1 0 000-2zm6 0a1 1 0 000 2 1 1 0 000-2z" />
+          </svg>
+        </div>
 
         {/* Checkbox */}
         <button
@@ -50,26 +61,16 @@ export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <p
-            className={`font-medium text-gray-800 truncate ${
-              task.completed ? 'line-through text-gray-400' : ''
-            }`}
-          >
+          <p className={`font-medium text-gray-800 truncate ${task.completed ? 'line-through text-gray-400' : ''}`}>
             {task.title}
           </p>
-
           {task.description && (
             <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
               {task.description}
             </p>
           )}
-
           {task.dueDate && (
-            <p
-              className={`text-xs mt-1.5 font-medium ${
-                overdue ? 'text-red-500' : 'text-gray-400'
-              }`}
-            >
+            <p className={`text-xs mt-1.5 font-medium ${overdue ? 'text-red-500' : 'text-gray-400'}`}>
               {overdue ? '⚠ Overdue · ' : '📅 '}
               {formatDate(task.dueDate)}
             </p>
@@ -80,19 +81,19 @@ export default function TaskCard({ task, onToggle, onEdit, onDelete }) {
         <div className="flex gap-1 shrink-0">
           <button
             onClick={() => onEdit(task)}
-            className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+            className="p-1.5 text-blue-600 hover:text-blue-400 hover:bg-blue-50 rounded-lg  cursor-pointer transition-colors"
             aria-label="Edit task"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-6 h-6"  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828A2 2 0 0110 16H8v-2a2 2 0 01.586-1.414z" />
             </svg>
           </button>
           <button
             onClick={() => onDelete(task)}
-            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 text-red-600 hover:text-red-400 hover:bg-red-50 cursor-pointer rounded-lg transition-colors"
             aria-label="Delete task"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a1 1 0 00-1-1h-4a1 1 0 00-1 1m-4 0h10" />
             </svg>
           </button>

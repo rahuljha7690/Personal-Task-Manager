@@ -22,7 +22,13 @@ export default function TaskList({
   onDelete,
   onReorder,
 }) {
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // must move 8px before drag starts
+      },
+    })
+  );
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -85,7 +91,10 @@ export default function TaskList({
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={tasks.map((t) => t.id)}
+        strategy={verticalListSortingStrategy}
+      >
         <div className="flex flex-col gap-3">
           {tasks.map((task) => (
             <SortableTaskCard

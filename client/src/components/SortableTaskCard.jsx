@@ -18,6 +18,7 @@ export default function SortableTaskCard({ task, onToggle, onEdit, onDelete }) {
     transition,
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 10 : 'auto',
+    position: 'relative',
   };
 
   return (
