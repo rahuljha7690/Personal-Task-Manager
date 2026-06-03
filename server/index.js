@@ -6,9 +6,6 @@ import taskRoutes from './routes/tasks.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ── CORS ───────────────────────────────────────────────────────
-// Allow requests from local dev and the deployed Vercel frontend.
-// FRONTEND_URL is set as an environment variable on Render.
 const allowedOrigins = [
   'http://localhost:5173',
   process.env.FRONTEND_URL,
@@ -17,7 +14,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. curl, Postman)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -39,13 +35,20 @@ app.get('/health', (req, res) => {
 
 // ── 404 handler ───────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found.' });
+  res.status(404).json({ error: `Route ${req.method} ${req.path} not found.` });
 });
 
 // ── Global error handler ──────────────────────────────────────
+// Catches anything passed to next(err) from route handlers
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong.' });
+  console.error(`[error] ${req.method} ${req.path}:`, err.message);
+
+  // Known operational errors (e.g. from saveTasks)
+  if (err.message === 'Could not persist tasks to disk.') {
+    return res.status(503).json({ error: 'Storage unavailable. Please try again.' });
+  }
+
+  res.status(500).json({ error: 'An unexpected error occurred.' });
 });
 
 app.listen(PORT, () => {

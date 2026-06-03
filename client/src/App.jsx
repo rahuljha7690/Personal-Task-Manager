@@ -18,6 +18,7 @@ export default function App() {
     setSearch,
     loading,
     error,
+    setError,
     addTask,
     toggleTask,
     editTask,
@@ -44,6 +45,23 @@ export default function App() {
           <h1 className="text-3xl font-bold text-gray-900">Task Manager</h1>
           <p className="text-gray-400 text-sm mt-1">Stay on top of your work</p>
         </div>
+
+        {/* Global error toast */}
+        {error && (
+          <div className="mb-4 flex items-start justify-between gap-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+            <div className="flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{error}</span>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-400 hover:text-red-600 shrink-0"
+              aria-label="Dismiss error"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="mb-6">
