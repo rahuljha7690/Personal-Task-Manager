@@ -1,7 +1,11 @@
 // api/tasks.js
 import axios from 'axios';
 
-const BASE = '/api/tasks';
+// In production this is set to your Render backend URL.
+// In development Vite proxy handles /api automatically.
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+
+const BASE = `${BASE_URL}/api/tasks`;
 
 export const fetchTasks = (status, search) => {
   const params = {};

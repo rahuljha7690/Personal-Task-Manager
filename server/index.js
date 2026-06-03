@@ -6,8 +6,27 @@ import taskRoutes from './routes/tasks.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ── Middlewares ─────────────────────────────────────────────────
-app.use(cors());
+// ── CORS ───────────────────────────────────────────────────────
+// Allow requests from local dev and the deployed Vercel frontend.
+// FRONTEND_URL is set as an environment variable on Render.
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  })
+);
+
 app.use(express.json());
 
 // ── Routes ────────────────────────────────────────────────────
