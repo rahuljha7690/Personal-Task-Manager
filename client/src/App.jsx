@@ -1,8 +1,12 @@
 // App.jsx
+import { useState } from 'react';
 import { useTasks } from './hooks/useTasks.js';
 import FilterTabs from './components/FilterTabs.jsx';
 import TaskStats from './components/TaskStats.jsx';
 import TaskList from './components/TaskList.jsx';
+import TaskForm from './components/TaskForm.jsx';
+import EditModal from './components/EditModal.jsx';
+import DeleteDialog from './components/DeleteDialog.jsx';
 
 export default function App() {
   const {
@@ -11,10 +15,22 @@ export default function App() {
     setFilter,
     loading,
     error,
+    addTask,
     toggleTask,
+    editTask,
+    removeTask,
     activeCount,
     completedCount,
   } = useTasks();
+
+  // Which task is currently being edited or deleted
+  const [editingTask, setEditingTask] = useState(null);
+  const [deletingTask, setDeletingTask] = useState(null);
+
+  const handleConfirmDelete = async (id) => {
+    await removeTask(id);
+    setDeletingTask(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,8 +47,11 @@ export default function App() {
           <TaskStats activeCount={activeCount} completedCount={completedCount} />
         </div>
 
+        {/* Add task form */}
+        <TaskForm onAdd={addTask} />
+
         {/* Filter tabs */}
-        <div className="mb-6">
+        <div className="mb-4">
           <FilterTabs filter={filter} onFilterChange={setFilter} />
         </div>
 
@@ -42,11 +61,24 @@ export default function App() {
           loading={loading}
           error={error}
           onToggle={toggleTask}
-          onEdit={(task) => console.log('edit', task)}
-          onDelete={(task) => console.log('delete', task)}
+          onEdit={(task) => setEditingTask(task)}
+          onDelete={(task) => setDeletingTask(task)}
         />
-
       </div>
+
+      {/* Edit modal */}
+      <EditModal
+        task={editingTask}
+        onSave={editTask}
+        onClose={() => setEditingTask(null)}
+      />
+
+      {/* Delete confirmation */}
+      <DeleteDialog
+        task={deletingTask}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeletingTask(null)}
+      />
     </div>
   );
 }
